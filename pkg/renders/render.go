@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func RenderTemplate(w http.ResponseWriter, tmpl string){
+func RenderTemplateTest(w http.ResponseWriter, tmpl string){
 	parseTemplate, _ := template.ParseFiles("./templates/" + tmpl, "./templates/base.layout.tmpl")
 	err := parseTemplate.Execute(w, nil)
 	if err != nil {
@@ -18,17 +18,21 @@ func RenderTemplate(w http.ResponseWriter, tmpl string){
 
 var tc = make(map[string]*template.Template)
 
-func RenderTemplateTest(w http.ResponseWriter, t string){
+func RenderTemplate(w http.ResponseWriter, t string){
 
 	var tmpl *template.Template
 	var err error
-
+	
 	// check to see if we already have template in our cache
-
 	_, inMap := tc[t]
 
 	if !inMap{
 		// need to create the template
+		log.Println("creating template and add it to the cache")
+		err = createTemplateCache(t)
+		if err != nil {
+			log.Println(err)
+		}
 	}else{
 		// we have the template in cache
 		log.Println("using cache template")
@@ -36,6 +40,9 @@ func RenderTemplateTest(w http.ResponseWriter, t string){
 
 	tmpl = tc[t]
 	err = tmpl.Execute(w,nil)
+	if err != nil {
+		log.Println(err)
+	}
 
 }
 
